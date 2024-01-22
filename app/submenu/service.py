@@ -16,7 +16,9 @@ class SubmenuService:
         return (await session.execute(query)).scalars().fetchall()
 
     @staticmethod
-    async def get_submenu(menu_id: str, submenu_id: str, session: AsyncSession) -> Submenu:
+    async def get_submenu(
+        menu_id: str, submenu_id: str, session: AsyncSession
+    ) -> Submenu:
         menu_id = convert_to_UUID(menu_id)
         submenu_id = convert_to_UUID(submenu_id)
         query = select(Submenu).where(
@@ -39,7 +41,9 @@ class SubmenuService:
         return new_submenu
 
     @staticmethod
-    async def update_submenu(menu_id: str, submenu_id: str, new_submenu: SubmenuUpdate, session: AsyncSession):
+    async def update_submenu(
+        menu_id: str, submenu_id: str, new_submenu: SubmenuUpdate, session: AsyncSession
+    ):
         submenu = await SubmenuService.get_submenu(menu_id, submenu_id, session)
         if new_submenu.title:
             submenu.title = new_submenu.title

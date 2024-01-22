@@ -32,3 +32,8 @@ class Menu(Base):
 class MenuPost(BaseModel):
     title: str
     description: str
+
+
+class MenuUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None

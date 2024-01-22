@@ -61,11 +61,13 @@ async def create_submenu(
 async def patch_submenu(
     menu_id: str,
     submenu_id: str,
-    submenu: SubmenuUpdate,
+    submenu: SubmenuPost,
     session: AsyncSession = Depends(get_session),
 ):
     try:
-        return await SubmenuService.update_submenu(menu_id, submenu_id, submenu, session)
+        return await SubmenuService.update_submenu(
+            menu_id, submenu_id, submenu, session
+        )
     except Exception as error:
         raise HTTPException(
             status_code=400,
