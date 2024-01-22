@@ -21,6 +21,17 @@ async def read_submenus(menu_id: str, session: AsyncSession = Depends(get_sessio
         )
 
 
+@router.get("/menus/{menu_id}/submenus/{submenu_id}")
+async def read_submenus(menu_id: str, submenu_id: str, session: AsyncSession = Depends(get_session)):
+    try:
+        return await SubmenuService.get_submenu(menu_id, submenu_id, session)
+    except Exception as error:
+        raise HTTPException(
+            status_code=400,
+            detail=error.args[0],
+        )
+
+
 @router.post(
     "/menus/{menu_id}/submenus",
     status_code=201,

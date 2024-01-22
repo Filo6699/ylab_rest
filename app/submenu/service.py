@@ -23,7 +23,7 @@ class SubmenuService:
             Submenu.menu_id == menu_id,
             Submenu.id == submenu_id,
         )
-        return (await session.execute(query)).scalars().fetchall()
+        return (await session.execute(query)).scalars().first()
 
     @staticmethod
     async def create_submenu(menu_id: str, submenu: SubmenuPost, session: AsyncSession):
