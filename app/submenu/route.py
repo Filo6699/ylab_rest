@@ -12,9 +12,13 @@ router = APIRouter()
 
 @router.get("/menus/{menu_id}/submenus")
 async def read_submenus(menu_id: str, session: AsyncSession = Depends(get_session)):
-    print(type(menu_id))
-    response = await SubmenuService.get_all_submenus(menu_id, session)
-    return response
+    try:
+        return await SubmenuService.get_all_submenus(menu_id, session)
+    except Exception as error:
+        raise HTTPException(
+            status_code=400,
+            detail=error.args[0],
+        )
 
 
 @router.post(
@@ -29,10 +33,7 @@ async def create_submenu(
     try:
         return await SubmenuService.create_submenu(menu_id, submenu, session)
     except Exception as error:
-        if isinstance(error, HTTPException):
-            raise error
-        else:
-            raise HTTPException(
-                status_code=400,
-                detail=error.args[0],
-            )
+        raise HTTPException(
+            status_code=400,
+            detail=error.args[0],
+        )

@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from decouple import config as env
 from sqlalchemy.pool import QueuePool
 from sqlalchemy.orm import Session, declarative_base
@@ -17,6 +19,13 @@ engine = create_async_engine(DATABASE_URL)
 Base = declarative_base()
 
 SessionLocal = async_sessionmaker(engine)
+
+
+def convert_to_UUID(uuid: str) -> UUID:
+    try:
+        return UUID(uuid)
+    except ValueError:
+        raise ValueError("Некорректный формат UUID.")
 
 
 async def get_session():
