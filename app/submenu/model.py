@@ -1,5 +1,5 @@
 import uuid
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
@@ -34,3 +34,8 @@ class Submenu(Base):
 class SubmenuPost(BaseModel):
     title: str
     description: str
+
+
+class SubmenuUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
