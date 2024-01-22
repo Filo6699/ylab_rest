@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .service import MenuService
 from .model import MenuPost, MenuUpdate
 from app.database import get_session
+from app.utils import get_error_code
 
 router = APIRouter()
 
@@ -22,7 +23,7 @@ async def get_menu(menu_id: str, session: AsyncSession = Depends(get_session)):
         return await MenuService.get_menu(menu_id, session)
     except Exception as error:
         raise HTTPException(
-            status_code=400,
+            status_code=get_error_code(error),
             detail=error.args[0],
         )
 
@@ -36,7 +37,7 @@ async def post_new_menu(menu: MenuPost, session: AsyncSession = Depends(get_sess
         return await MenuService.create_menu(menu=menu, session=session)
     except Exception as error:
         raise HTTPException(
-            status_code=400,
+            status_code=get_error_code(error),
             detail=error.args[0],
         )
 
@@ -48,11 +49,23 @@ async def patch_menu(
     session: AsyncSession = Depends(get_session),
 ):
     try:
-        return await MenuService.update_menu(
-            menu_id, menu, session
-        )
+        return await MenuService.update_menu(menu_id, menu, session)
     except Exception as error:
         raise HTTPException(
-            status_code=400,
+            status_code=get_error_code(error),
+            detail=error.args[0],
+        )
+
+
+@router.delete("/menus/{menu_id}")
+async def delete_menu(
+    menu_id: str,
+    session: AsyncSession = Depends(get_session),
+):
+    try:
+        return await MenuService.delete_menu(menu_id, session)
+    except Exception as error:
+        raise HTTPException(
+            status_code=get_error_code(error),
             detail=error.args[0],
         )
