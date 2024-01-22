@@ -24,7 +24,7 @@ async def read_submenus(
 
 
 @router.get("/menus/{menu_id}/submenus/{submenu_id}")
-async def read_submenus(
+async def read_submenu(
     menu_id: str,
     submenu_id: str,
     session: AsyncSession = Depends(get_session),
