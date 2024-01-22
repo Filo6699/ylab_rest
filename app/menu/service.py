@@ -1,4 +1,4 @@
-import uuid
+from typing import List
 
 from fastapi import Depends
 from sqlalchemy import select, insert
@@ -12,12 +12,13 @@ from app.utils import convert_to_UUID
 
 class MenuService:
     @staticmethod
-    async def get_all_menus(session: AsyncSession = Depends(get_session)):
+    async def get_all_menus(session: AsyncSession = Depends(get_session)) -> List[Menu]:
         return (await session.execute(select(Menu))).scalars().fetchall()
 
     @staticmethod
     async def get_menu(
-        menu_id: str, session: AsyncSession = Depends(get_session)
+        menu_id: str,
+        session: AsyncSession = Depends(get_session),
     ) -> Menu:
         menu_id = convert_to_UUID(menu_id)
         query = select(Menu).where(Menu.id == menu_id)
@@ -27,7 +28,10 @@ class MenuService:
         return menu
 
     @staticmethod
-    async def create_menu(menu: MenuPost, session: AsyncSession) -> Menu:
+    async def create_menu(
+        menu: MenuPost,
+        session: AsyncSession,
+    ) -> Menu:
         new_menu = Menu(
             title=menu.title,
             description=menu.description,
@@ -39,7 +43,9 @@ class MenuService:
 
     @staticmethod
     async def update_menu(
-        menu_id: str, new_menu: MenuUpdate, session: AsyncSession
+        menu_id: str,
+        new_menu: MenuUpdate,
+        session: AsyncSession,
     ) -> Menu:
         menu = await MenuService.get_menu(menu_id, session)
         if new_menu.title:
@@ -52,7 +58,10 @@ class MenuService:
         return menu
 
     @staticmethod
-    async def delete_menu(menu_id: str, session: AsyncSession):
+    async def delete_menu(
+        menu_id: str,
+        session: AsyncSession,
+    ) -> None:
         menu = await MenuService.get_menu(menu_id, session)
         await session.delete(menu)
         await session.commit()

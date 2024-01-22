@@ -1,6 +1,5 @@
-from uuid import UUID
+from typing import List
 
-from fastapi import HTTPException
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.exc import NoResultFound
@@ -11,14 +10,19 @@ from app.utils import convert_to_UUID
 
 class SubmenuService:
     @staticmethod
-    async def get_all_submenus(menu_id: str, session: AsyncSession):
+    async def get_all_submenus(
+        menu_id: str,
+        session: AsyncSession,
+    ) -> List[Submenu]:
         menu_id = convert_to_UUID(menu_id)
         query = select(Submenu).where(Submenu.menu_id == menu_id)
         return (await session.execute(query)).scalars().fetchall()
 
     @staticmethod
     async def get_submenu(
-        menu_id: str, submenu_id: str, session: AsyncSession
+        menu_id: str,
+        submenu_id: str,
+        session: AsyncSession,
     ) -> Submenu:
         menu_id = convert_to_UUID(menu_id)
         submenu_id = convert_to_UUID(submenu_id)
@@ -32,7 +36,11 @@ class SubmenuService:
         return submenu
 
     @staticmethod
-    async def create_submenu(menu_id: str, submenu: SubmenuPost, session: AsyncSession):
+    async def create_submenu(
+        menu_id: str,
+        submenu: SubmenuPost,
+        session: AsyncSession,
+    ) -> Submenu:
         menu_id = convert_to_UUID(menu_id)
         new_submenu = Submenu(
             menu_id=menu_id,
@@ -46,8 +54,11 @@ class SubmenuService:
 
     @staticmethod
     async def update_submenu(
-        menu_id: str, submenu_id: str, new_submenu: SubmenuUpdate, session: AsyncSession
-    ):
+        menu_id: str,
+        submenu_id: str,
+        new_submenu: SubmenuUpdate,
+        session: AsyncSession,
+    ) -> Submenu:
         submenu = await SubmenuService.get_submenu(menu_id, submenu_id, session)
         if new_submenu.title:
             submenu.title = new_submenu.title
@@ -60,7 +71,9 @@ class SubmenuService:
 
     @staticmethod
     async def delete_submenu(
-        menu_id: str, submenu_id: str, session: AsyncSession
+        menu_id: str,
+        submenu_id: str,
+        session: AsyncSession,
     ) -> None:
         submenu = await SubmenuService.get_submenu(menu_id, submenu_id, session)
         await session.delete(submenu)

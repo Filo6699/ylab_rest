@@ -1,14 +1,9 @@
 import uuid
-from typing import List, Optional
+from typing import Optional
 
 from sqlalchemy import Column, Integer, String, ForeignKey, DECIMAL
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import (
-    mapped_column,
-    Mapped,
-    relationship,
-)
+from sqlalchemy.orm import relationship
 from pydantic import BaseModel, validator
 
 from app.database import Base

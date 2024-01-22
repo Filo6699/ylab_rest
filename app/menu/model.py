@@ -1,16 +1,16 @@
 import uuid
-from typing import List, Optional
+from typing import Optional
 
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, String, select, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import (
-    mapped_column,
-    Mapped,
+    column_property,
     relationship,
 )
-from pydantic import BaseModel, UUID4
+from pydantic import BaseModel
 
+from app.submenu.model import Submenu
+from app.dish.model import Dish
 from app.database import Base
 
 
@@ -27,6 +27,18 @@ class Menu(Base):
     title = Column(String)
     description = Column(String)
     submenus = relationship("Submenu", back_populates="menu", cascade="all, delete")
+    submenus_count = column_property(
+        select(func.count(Submenu.id))
+        .where(Submenu.menu_id == id)
+        .correlate_except(Submenu)
+        .as_scalar()
+    )
+    dishes_count = column_property(
+        select(func.count(Dish.id))
+        .where(Dish.submenu_id.in_(select(Submenu.id).where(Submenu.menu_id == id)))
+        .correlate_except(Dish)
+        .as_scalar()
+    )
 
 
 class MenuPost(BaseModel):

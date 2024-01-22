@@ -1,8 +1,5 @@
-from uuid import UUID
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm.exc import NoResultFound
 
 from .service import SubmenuService
 from .model import SubmenuPost, SubmenuUpdate

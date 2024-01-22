@@ -1,8 +1,6 @@
-import uuid
 from typing import List
 
-from fastapi import Depends
-from sqlalchemy import select, insert
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.exc import NoResultFound
 
