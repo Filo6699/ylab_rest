@@ -1,49 +1,31 @@
 from uuid import UUID
 
-from sqlalchemy import select, insert
-from sqlalchemy.orm import Session
+from fastapi import HTTPException
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from .model import Submenu, SubmenuPost
 
 
 class SubmenuService:
-    ...
+    @staticmethod
+    async def get_all_submenus(menu_id, session: AsyncSession):
+        menu_id = UUID(menu_id)
+        query = select(Submenu).where(Submenu.menu_id == menu_id)
+        return (await session.execute(query)).scalars().fetchall()
 
-
-#     @staticmethod
-#     def get_submenu(menu_id: UUID, submenu_id: UUID, db: Session):
-#         query = select(Submenu.title, Submenu.description).where(
-#             Submenu.id == submenu_id and Submenu.menu_id == menu_id
-#         )
-#         result = db.execute(query)
-#         return result
-
-#     @staticmethod
-#     def get_submenus(menu_id: UUID, db: Session):
-#         query = select(Submenu.title, Submenu.description).where(
-#             Submenu.menu_id == menu_id
-#         )
-#         result = db.execute(query)
-#         print(result)
-#         return result
-
-#     @staticmethod
-#     def create_submenu(menu_id: UUID, submenu: SubmenuPost, db: Session):
-#         if (
-#             db.query(Submenu)
-#             .filter(Submenu.menu_id == menu_id, Submenu.title == submenu.title)
-#             .first()
-#             is not None
-#         ):
-#             return {"ok": False, "error": "Submenu with that title already exists."}
-#         new_submenu = Submenu(
-#             menu_id=menu_id,
-#             title=submenu.title,
-#             description=submenu.description,
-#         )
-#         try:
-#             db.add(new_submenu)
-#             db.commit()
-#         except Exception as err:
-#             return {"ok": False, "error": err}
-#         return {"ok": True, "id": str(new_submenu.id)}
+    @staticmethod
+    async def create_submenu(menu_id, submenu: SubmenuPost, session: AsyncSession):
+        try:
+            menu_id = UUID(menu_id)
+        except ValueError:
+            raise ValueError("Некорретный формат UUID меню.")
+        new_submenu = Submenu(
+            menu_id=menu_id,
+            title=submenu.title,
+            description=submenu.description,
+        )
+        session.add(new_submenu)
+        await session.commit()
+        await session.refresh(new_submenu)
+        return new_submenu

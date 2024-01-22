@@ -1,9 +1,7 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
-from fastapi.responses import JSONResponse
-from psycopg2.errors import UniqueViolation
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from .service import SubmenuService
 from .model import SubmenuPost
@@ -12,38 +10,29 @@ from app.database import get_session
 router = APIRouter()
 
 
-# don't ask questions.
-
-# @router.get("/menus/{menu_id}/submenus")
-# async def read_submenus(menu_id: UUID, db: Session = Depends(get_db)):
-#     response_fields = []
-#     for item in SubmenuService.get_submenus(menu_id, db):
-#         response_fields.append(item)
-#     return response_fields
+@router.get("/menus/{menu_id}/submenus")
+async def read_submenus(menu_id: str, session: AsyncSession = Depends(get_session)):
+    print(type(menu_id))
+    response = await SubmenuService.get_all_submenus(menu_id, session)
+    return response
 
 
-# @router.get("/menus/{menu_id}/submenus/{submenu_id}")
-# async def read_submenu(menu_id: UUID, submenu_id: UUID, db: Session = Depends(get_db)):
-#     response_fields = []
-#     for item in SubmenuService.get_submenu(menu_id, submenu_id, db):
-#         response_fields.append(item)
-#     return response_fields
-
-
-# @router.post("/menus/{menu_id}/submenus")
-# def create_submenu(
-#     menu_id: UUID, submenu: SubmenuCreationModel, db: Session = Depends(get_db)
-# ):
-#     result = SubmenuService.create_submenu(menu_id, submenu, db)
-#     if result["ok"] == False:
-#         error = result["error"]
-#         status_code = 400
-#         response = {"message": error}
-#         return JSONResponse(content=response, status_code=status_code)
-#     else:
-#         response = {
-#             "title": submenu.title,
-#             "description": submenu.description,
-#             "id": result["id"],
-#         }
-#         return JSONResponse(content=response, status_code=201)
+@router.post(
+    "/menus/{menu_id}/submenus",
+    status_code=201,
+)
+async def create_submenu(
+    menu_id: str,
+    submenu: SubmenuPost,
+    session: AsyncSession = Depends(get_session),
+):
+    try:
+        return await SubmenuService.create_submenu(menu_id, submenu, session)
+    except Exception as error:
+        if isinstance(error, HTTPException):
+            raise error
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail=error.args[0],
+            )
