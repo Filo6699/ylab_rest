@@ -59,7 +59,9 @@ class SubmenuService:
         return submenu
 
     @staticmethod
-    async def delete_submenu(menu_id: str, submenu_id: str, session: AsyncSession) -> None:
+    async def delete_submenu(
+        menu_id: str, submenu_id: str, session: AsyncSession
+    ) -> None:
         submenu = await SubmenuService.get_submenu(menu_id, submenu_id, session)
         await session.delete(submenu)
         await session.commit()
