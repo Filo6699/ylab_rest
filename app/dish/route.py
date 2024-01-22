@@ -30,7 +30,7 @@ async def get_dishes(
 
 
 @router.get("/menus/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}")
-async def get_dishes(
+async def get_dish(
     menu_id: str,
     submenu_id: str,
     dish_id: str,
@@ -51,7 +51,7 @@ async def get_dishes(
     "/menus/{menu_id}/submenus/{submenu_id}/dishes",
     status_code=201,
 )
-async def get_dishes(
+async def create_dish(
     menu_id: str,
     submenu_id: str,
     dish: DishPost,
