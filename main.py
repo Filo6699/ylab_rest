@@ -8,9 +8,3 @@ app = FastAPI()
 
 for router in [menu_router, submenu_router, dish_router]:
     app.include_router(router, prefix="/api/v1")
-
-
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(app, host="127.0.0.1", port=8000)

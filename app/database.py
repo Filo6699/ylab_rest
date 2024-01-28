@@ -4,13 +4,11 @@ from sqlalchemy.orm import Session, declarative_base
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
 
-PSQL_USER = env("PSQL_USER")
-PSQL_PASSWORD = env("PSQL_PASSWORD")
-PSQL_HOST = env("PSQL_HOST")
-PSQL_PORT = env("PSQL_PORT")
-PSQL_DATABASE = env("PSQL_DATABASE")
+PSQL_USER = env("POSTGRES_USER")
+PSQL_PASSWORD = env("POSTGRES_PASSWORD")
+PSQL_DATABASE = env("POSTGRES_DB")
 
-DATABASE_URL = f"postgresql+asyncpg://{PSQL_USER}:{PSQL_PASSWORD}@{PSQL_HOST}:{PSQL_PORT}/{PSQL_DATABASE}"
+DATABASE_URL = f"postgresql+asyncpg://{PSQL_USER}:{PSQL_PASSWORD}@database:5432/{PSQL_DATABASE}"
 
 engine = create_async_engine(DATABASE_URL)
 
